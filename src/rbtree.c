@@ -112,7 +112,7 @@ void Left_Rotate(rbtree *t, node_t *cur)
 
 void Right_Rotate(rbtree *t, node_t *cur)
 {
-    printf("라이트 로테이트\n");
+    // printf("라이트 로테이트\n");
     // y = cur
     node_t *target = cur->left;
     cur->left = target->right;
@@ -143,7 +143,6 @@ void Right_Rotate(rbtree *t, node_t *cur)
 
 void RB_Insert_Fixup(rbtree *t, node_t *cur)
 {
-    printf("픽스업 진입\n");
     while (cur->parent->color == RBTREE_RED)
     {
         if (cur->parent == cur->parent->parent->left)
@@ -215,23 +214,36 @@ node_t *rbtree_find(const rbtree *t, const key_t key)
     return NULL;
 }
 
-node_t *rbtree_min(const rbtree *t) {
-  // TODO: implement find
-  if (t->root == t->nil) {
-    return NULL;
-  }
-  node_t * curr = t->root;
+node_t *rbtree_min(const rbtree *t)
+{
+    // TODO: implement find
+    if (t->root == t->nil)
+    {
+        return NULL;
+    }
+    node_t *curr = t->root;
 
-  while (curr->left != t->nil) {
-    curr = curr->left;
-  }
-  return curr;
+    while (curr->left != t->nil)
+    {
+        curr = curr->left;
+    }
+    return curr;
 }
 
 node_t *rbtree_max(const rbtree *t)
 {
     // TODO: implement find
-    return t->root;
+    if (t->root == t->nil)
+    {
+        return NULL;
+    }
+    node_t *curr = t->root;
+    
+    while (curr->right != t->nil)
+    {
+        curr = curr->right;
+    }
+    return curr;
 }
 
 void RB_TransPlant(rbtree *t, node_t *u, node_t *v)
@@ -257,17 +269,16 @@ void RB_TransPlant(rbtree *t, node_t *u, node_t *v)
     v->parent = u->parent;
     // printf("TransPlant 탈출 u parent is : %d  !! \n", u->parent->key );
     // printf("TransPlant 탈출 v parent is : %d  !! \n", v->parent->key );
-
 }
 
 node_t *Find_successor(node_t *cur, node_t *nil)
 {
-    printf("Before Successor 값 : %d !! \n",cur->key );
+    // printf("Before Successor 값 : %d !! \n",cur->key );
     while (cur->left != nil)
     {
         cur = cur->left;
     }
-    printf("After Successor 값 : %d !! \n",cur->key );
+    // printf("After Successor 값 : %d !! \n",cur->key );
     return cur;
 }
 
@@ -295,15 +306,15 @@ int rbtree_erase(rbtree *t, node_t *target)
     else
     {
         // printf("Target Before go to Find_Successor값 : %d !! \n",target->key );
-        
         successor = target->right;
-        while(successor->left != t->nil){
+        while (successor->left != t->nil)
+        {
             successor = successor->left;
         }
 
         target_original_color = successor->color;
         x = successor->right;
-        
+
         if (successor->parent == target)
         {
             x->parent = successor;
@@ -333,7 +344,8 @@ int rbtree_erase(rbtree *t, node_t *target)
 void RB_Delete_fixup(rbtree *t, node_t *cur)
 {
     node_t *bro;
-    while (cur != t->root && cur->color == RBTREE_BLACK) {
+    while (cur != t->root && cur->color == RBTREE_BLACK)
+    {
         if (cur == cur->parent->left)
         {
             bro = cur->parent->right;
@@ -402,8 +414,26 @@ void RB_Delete_fixup(rbtree *t, node_t *cur)
     cur->color = RBTREE_BLACK;
 }
 
+
+int inorder_traverse(const node_t *cur, node_t *nil ,key_t *arr, const size_t n, int i) {
+    if (cur == nil) {
+        return i;
+    }
+
+    i = inorder_traverse(cur->left,nil,arr,n,i);
+    arr[i] = cur->key;
+    i++;
+    i = inorder_traverse(cur->right,nil,arr,n,i);
+    return i;
+}
+
 int rbtree_to_array(const rbtree *t, key_t *arr, const size_t n)
 {
     // TODO: implement to_array
+    if (t->root == t->nil) {
+        return 0;
+    }
+    node_t *rootNode = t->root;
+    inorder_traverse(rootNode,t->nil,arr,n,0);
     return 0;
 }
